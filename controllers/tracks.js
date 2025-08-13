@@ -11,8 +11,33 @@ router.post("/", async (req, res) => {
 	}
 });
 /* =================== READ ==================== */
-router.get("/:trackId", async (req, res) => {});
+router.get("/", async (req, res) => {
+	try {
+		const foundTracks = await Track.find();
+		res.status(200).json(foundTracks);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+router.get("/:trackId", async (req, res) => {
+	try {
+		const foundTrack = await Track.findById(req.params.trackId);
+		if (!foundTrack) {
+			res.status(404);
+			throw new Error("track not found");
+		}
+		res.status(200).json(foundTrack);
+	} catch (error) {
+		if (res.statusCode === 404) {
+			res.json({ error: error.message });
+		} else {
+			res.status(500).json({ error: error.message });
+		}
+	}
+});
 /* =================== UPDATE ==================== */
+
 /* =================== DELETE ==================== */
 
 module.exports = router;
